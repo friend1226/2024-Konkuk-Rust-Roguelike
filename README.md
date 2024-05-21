@@ -35,7 +35,7 @@
     - Slices: `&[T]`
     - Strings
   - Assignment #1
-- Week 2 (4/9) [[Assignment]](./3%20-%20Assignment/240409%20-%20Rust%20Basic%20+%20Roguelike%20Game,%20Week%202/)
+- Week 2 (4/9) [[Assignment]](./3%20-%20Assignment/240409%20-%20Rust%20Basic%20+%20Roguelike%20Game,%20Week%202/) [[Solution]](./4%20-%20Solution/240409%20-%20Rust%20Basic%20+%20Roguelike%20Game,%20Week%202/)
   - User-Defined Types
     - Named Structs
     - Tuple Structs
@@ -51,6 +51,8 @@
     - Methods
     - Traits
     - Deriving
+  - Assignment #2
+- Week 3 (5/7) [[Assignment]](./3%20-%20Assignment/240507%20-%20Rust%20Basic%20+%20Roguelike%20Game,%20Week%203/) [[Solution]](./4%20-%20Solution/240507%20-%20Rust%20Basic%20+%20Roguelike%20Game,%20Week%203/)
   - Generics
     - Generic Functions
     - Generic Data Types
@@ -72,21 +74,37 @@
     - `Read` and `Write`
     - `Default`, struct update syntax
     - Closures
-  - Assignment #2
-- Week 3 (TBA)
-  - Memory Management
-  - Smart Pointers
-  - Borrowing
-  - Lifetimes
   - Assignment #3
-- Week 4 (TBA)
+- Week 4 (5/21) [[Assignment]](./3%20-%20Assignment/240521%20-%20Rust%20Basic%20+%20Roguelike%20Game,%20Week%204/)
+  - Memory Management
+    - Review of Program Memory
+    - Approaches to Memory Management
+    - Onwership
+    - Move Semantics
+    - Clone
+    - Copy Types
+    - Drop
+  - Smart Pointers
+    - Box
+    - Rc
+    - Trait Objects
+  - Borrowing
+    - Borrowing a Value
+    - Borrow Checking
+    - Interior Mutability
+  - Lifetimes
+    - Lifetime Annotations
+    - Lifetime Elision
+    - Struct Lifetimes
+  - Assignment #4
+- Week 5 (TBA)
   - Iterators
   - Modules
   - Testing
   - Error Handling
   - Unsafe Rust
-  - Assignment #4
-- Week 5 (TBA)
+  - Assignment #5
+- Week 6 (TBA)
   - Threads
   - Channels
   - Send and Async
@@ -94,15 +112,15 @@
   - Async Basics
   - Control Flow
   - Pitfalls
-  - Assignment #5
-- Week 6 (TBA)
-  - Closures
-  - Macros
   - Assignment #6
 - Week 7 (TBA)
+  - Closures
+  - Macros
+  - Assignment #7
+- Week 8 (TBA)
   - Foreign Function Interface (FFI)
   - Rust and WebAssembly
-  - Assignment #7
+  - Assignment #8
 
 ## References
 
