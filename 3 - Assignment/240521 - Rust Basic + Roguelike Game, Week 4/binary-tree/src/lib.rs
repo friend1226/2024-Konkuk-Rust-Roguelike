@@ -22,39 +22,37 @@ pub struct BinaryTree<T: Ord> {
 
 impl<T: Ord> Subtree<T> {
     pub fn len(&self) -> i32 {
-        if self.0.is_none() {
-            return 0;
+        match &self.0 {
+            Some(node) => node.left.len() + node.right.len() + 1,
+            None => 0,
         }
-        let node = self.0.as_ref().unwrap();
-        node.left.len() + node.right.len() + 1
     }
 
     pub fn insert(&mut self, value: T) {
-        if self.0.is_none() {
-            self.0 = Some(Box::new(Node {
-                value: value,
-                left: Subtree(None),
-                right: Subtree(None),
-            }));
-            return;
-        }
-        let node = self.0.as_mut().unwrap();
-        match value.cmp(&node.value) {
-            std::cmp::Ordering::Less => node.left.insert(value),
-            std::cmp::Ordering::Greater => node.right.insert(value),
-            std::cmp::Ordering::Equal => {}
+        match &mut self.0 {
+            Some(node) => match value.cmp(&node.value) {
+                std::cmp::Ordering::Less => node.left.insert(value),
+                std::cmp::Ordering::Greater => node.right.insert(value),
+                std::cmp::Ordering::Equal => {}
+            },
+            None => {
+                self.0 = Some(Box::new(Node {
+                    value,
+                    left: Subtree(None),
+                    right: Subtree(None),
+                }))
+            }
         }
     }
 
     pub fn has(&self, value: &T) -> bool {
-        if self.0.is_none() {
-            return false;
-        }
-        let node = self.0.as_ref().unwrap();
-        match value.cmp(&node.value) {
-            std::cmp::Ordering::Less => node.left.has(value),
-            std::cmp::Ordering::Greater => node.right.has(value),
-            std::cmp::Ordering::Equal => true,
+        match &self.0 {
+            Some(node) => match value.cmp(&node.value) {
+                std::cmp::Ordering::Less => node.left.has(value),
+                std::cmp::Ordering::Greater => node.right.has(value),
+                std::cmp::Ordering::Equal => true,
+            },
+            None => false,
         }
     }
 }
