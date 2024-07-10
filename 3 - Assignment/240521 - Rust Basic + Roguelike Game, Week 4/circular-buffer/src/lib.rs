@@ -15,33 +15,37 @@ pub enum Error {
 
 impl<T> CircularBuffer<T> {
     pub fn new(capacity: usize) -> Self {
-        let mut buf = Vec::with_capacity(capacity);
-        for _ in 0..capacity {
-            buf.push(None);
-        }
         Self {
-            buffer: buf,
+            buffer: (0..capacity).map(|_| None).collect(),
             start_idx: 0,
             end_idx: 0,
         }
     }
 
-    pub fn write(&mut self, _element: T) -> Result<(), Error> {
-        if self.start_idx == self.end_idx && self.buffer[self.start_idx].is_some() {
+    fn is_empty(&self) -> bool {
+        self.start_idx == self.end_idx && self.buffer[self.start_idx].is_none()
+    }
+
+    fn is_full(&self) -> bool {
+        self.start_idx == self.end_idx && self.buffer[self.start_idx].is_some()
+    }
+
+    pub fn write(&mut self, element: T) -> Result<(), Error> {
+        if self.is_full() {
             Err(Error::FullBuffer)
         } else {
-            let capacity = self.buffer.capacity();
-            self.buffer[self.end_idx] = Some(_element);
+            let capacity = self.buffer.len();
+            self.buffer[self.end_idx] = Some(element);
             self.end_idx = (self.end_idx + 1) % capacity;
             Ok(())
         }
     }
 
     pub fn read(&mut self) -> Result<T, Error> {
-        if self.start_idx == self.end_idx && self.buffer[self.start_idx].is_none() {
+        if self.is_empty() {
             Err(Error::EmptyBuffer)
         } else {
-            let capacity = self.buffer.capacity();
+            let capacity = self.buffer.len();
             let value = std::mem::replace(&mut self.buffer[self.start_idx], None);
             self.start_idx = (self.start_idx + 1) % capacity;
             Ok(value.unwrap())
@@ -49,14 +53,14 @@ impl<T> CircularBuffer<T> {
     }
 
     pub fn clear(&mut self) {
-        for idx in 0..self.buffer.capacity() {
+        for idx in 0..self.buffer.len() {
             self.buffer[idx] = None;
         }
     }
 
-    pub fn overwrite(&mut self, _element: T) {
-        let capacity = self.buffer.capacity();
-        self.buffer[self.end_idx] = Some(_element);
+    pub fn overwrite(&mut self, element: T) {
+        let capacity = self.buffer.len();
+        self.buffer[self.end_idx] = Some(element);
         if self.start_idx == self.end_idx {
             self.start_idx = (self.start_idx + 1) % capacity;
         }
