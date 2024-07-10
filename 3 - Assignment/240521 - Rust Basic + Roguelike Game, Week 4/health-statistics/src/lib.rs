@@ -38,14 +38,12 @@ impl User {
             patient_name: &self.name,
             visit_count: self.visit_count as u32,
             height_change: measurements.height - self.height,
-            blood_pressure_change: if self.last_blood_pressure.is_none() {
-                None
-            } else {
-                let last_blood_pressure = self.last_blood_pressure.unwrap();
-                Some((
+            blood_pressure_change: match &self.last_blood_pressure {
+                Some(last_blood_pressure) => Some((
                     measurements.blood_pressure.0 as i32 - last_blood_pressure.0 as i32,
                     measurements.blood_pressure.1 as i32 - last_blood_pressure.1 as i32,
-                ))
+                )),
+                None => None,
             },
         };
         self.height = measurements.height;
