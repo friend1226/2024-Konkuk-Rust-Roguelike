@@ -39,7 +39,7 @@ impl PackageBuilder {
     fn new(name: impl Into<String>) -> Self {
         PackageBuilder(Package {
             name: name.into(),
-            version: "".to_string(),
+            version: "0.1".to_string(),
             authors: vec![],
             dependencies: vec![],
             language: None,
