@@ -22,7 +22,7 @@ impl From<&str> for CardSuit {
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
 enum CardRank {
-    TWO,
+    TWO = 2,
     THREE,
     FOUR,
     FIVE,
@@ -34,7 +34,13 @@ enum CardRank {
     JACK,
     QUEEN,
     KING,
-    ACE,
+    ACE = 14,
+}
+
+impl CardRank {
+    fn is_consecutive(&self, other: &Self) -> bool {
+        (*self as u8).abs_diff(*other as u8) == 1
+    }
 }
 
 impl From<&str> for CardRank {
@@ -209,41 +215,24 @@ impl<'a> Hand<'a> {
         let mut single_counted_vec: Vec<CardRank> = Vec::from_iter(single_counted_set);
         single_counted_vec.sort();
         if suit_count.iter().position(|&v| v == 5).is_some() {
-            match single_counted_vec[..] {
-                [CardRank::TEN, CardRank::JACK, CardRank::QUEEN, CardRank::KING, CardRank::ACE] => {
-                    HandRanking::StraightFlush(CardRank::ACE)
-                }
-                [CardRank::NINE, CardRank::TEN, CardRank::JACK, CardRank::QUEEN, CardRank::KING] => {
-                    HandRanking::StraightFlush(CardRank::KING)
-                }
-                [CardRank::EIGHT, CardRank::NINE, CardRank::TEN, CardRank::JACK, CardRank::QUEEN] => {
-                    HandRanking::StraightFlush(CardRank::QUEEN)
-                }
-                [CardRank::SEVEN, CardRank::EIGHT, CardRank::NINE, CardRank::TEN, CardRank::JACK] => {
-                    HandRanking::StraightFlush(CardRank::JACK)
-                }
-                [CardRank::SIX, CardRank::SEVEN, CardRank::EIGHT, CardRank::NINE, CardRank::TEN] => {
-                    HandRanking::StraightFlush(CardRank::TEN)
-                }
-                [CardRank::FIVE, CardRank::SIX, CardRank::SEVEN, CardRank::EIGHT, CardRank::NINE] => {
-                    HandRanking::StraightFlush(CardRank::NINE)
-                }
-                [CardRank::FOUR, CardRank::FIVE, CardRank::SIX, CardRank::SEVEN, CardRank::EIGHT] => {
-                    HandRanking::StraightFlush(CardRank::EIGHT)
-                }
-                [CardRank::THREE, CardRank::FOUR, CardRank::FIVE, CardRank::SIX, CardRank::SEVEN] => {
-                    HandRanking::StraightFlush(CardRank::SEVEN)
-                }
-                [CardRank::TWO, CardRank::THREE, CardRank::FOUR, CardRank::FIVE, CardRank::SIX] => {
-                    HandRanking::StraightFlush(CardRank::SIX)
-                }
-                [CardRank::TWO, CardRank::THREE, CardRank::FOUR, CardRank::FIVE, CardRank::ACE] => {
-                    HandRanking::StraightFlush(CardRank::FIVE)
-                }
-                _ => {
-                    single_counted_vec.reverse();
-                    HandRanking::Flush(single_counted_vec[..].try_into().unwrap())
-                }
+            if single_counted_vec
+                .windows(2)
+                .all(|w| w[0].is_consecutive(&w[1]))
+            {
+                HandRanking::StraightFlush(single_counted_vec[4])
+            } else if single_counted_vec
+                == vec![
+                    CardRank::TWO,
+                    CardRank::THREE,
+                    CardRank::FOUR,
+                    CardRank::FIVE,
+                    CardRank::ACE,
+                ]
+            {
+                HandRanking::StraightFlush(CardRank::FIVE)
+            } else {
+                single_counted_vec.reverse();
+                HandRanking::Flush(single_counted_vec[..].try_into().unwrap())
             }
         } else if !quadra_counted_set.is_empty() {
             HandRanking::FourOfAKind([
@@ -272,42 +261,25 @@ impl<'a> Hand<'a> {
                 HandRanking::OnePair(single_counted_vec[..].try_into().unwrap())
             }
         } else {
-            match single_counted_vec[..] {
-                [CardRank::TEN, CardRank::JACK, CardRank::QUEEN, CardRank::KING, CardRank::ACE] => {
-                    HandRanking::Straight(CardRank::ACE)
-                }
-                [CardRank::NINE, CardRank::TEN, CardRank::JACK, CardRank::QUEEN, CardRank::KING] => {
-                    HandRanking::Straight(CardRank::KING)
-                }
-                [CardRank::EIGHT, CardRank::NINE, CardRank::TEN, CardRank::JACK, CardRank::QUEEN] => {
-                    HandRanking::Straight(CardRank::QUEEN)
-                }
-                [CardRank::SEVEN, CardRank::EIGHT, CardRank::NINE, CardRank::TEN, CardRank::JACK] => {
-                    HandRanking::Straight(CardRank::JACK)
-                }
-                [CardRank::SIX, CardRank::SEVEN, CardRank::EIGHT, CardRank::NINE, CardRank::TEN] => {
-                    HandRanking::Straight(CardRank::TEN)
-                }
-                [CardRank::FIVE, CardRank::SIX, CardRank::SEVEN, CardRank::EIGHT, CardRank::NINE] => {
-                    HandRanking::Straight(CardRank::NINE)
-                }
-                [CardRank::FOUR, CardRank::FIVE, CardRank::SIX, CardRank::SEVEN, CardRank::EIGHT] => {
-                    HandRanking::Straight(CardRank::EIGHT)
-                }
-                [CardRank::THREE, CardRank::FOUR, CardRank::FIVE, CardRank::SIX, CardRank::SEVEN] => {
-                    HandRanking::Straight(CardRank::SEVEN)
-                }
-                [CardRank::TWO, CardRank::THREE, CardRank::FOUR, CardRank::FIVE, CardRank::SIX] => {
-                    HandRanking::Straight(CardRank::SIX)
-                }
-                [CardRank::TWO, CardRank::THREE, CardRank::FOUR, CardRank::FIVE, CardRank::ACE] => {
-                    HandRanking::Straight(CardRank::FIVE)
-                }
-                _ => {
-                    rank_vec.sort();
-                    rank_vec.reverse();
-                    HandRanking::HighCard(rank_vec[..].try_into().unwrap())
-                }
+            if single_counted_vec
+                .windows(2)
+                .all(|w| w[0].is_consecutive(&w[1]))
+            {
+                HandRanking::Straight(single_counted_vec[4])
+            } else if single_counted_vec
+                == vec![
+                    CardRank::TWO,
+                    CardRank::THREE,
+                    CardRank::FOUR,
+                    CardRank::FIVE,
+                    CardRank::ACE,
+                ]
+            {
+                HandRanking::Straight(CardRank::FIVE)
+            } else {
+                rank_vec.sort();
+                rank_vec.reverse();
+                HandRanking::HighCard(rank_vec[..].try_into().unwrap())
             }
         }
     }
